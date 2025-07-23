@@ -10,7 +10,10 @@ const cookieOptions = {
   httpOnly: true,
   secure: true,
 };
-
+const getAll = async (req, res, next)=>{
+  const task = await User.findAll();
+  res.json(task);
+};
 // Controller for user register
 const register = asyncHandler(async (req, res, next) => {
   const {username, email, password} = req.body;
@@ -112,4 +115,4 @@ const logout = asyncHandler(async (req, res, next) => {
       );
 });
 
-module.exports = {register, login, logout};
+module.exports = {getAll, register, login, logout};
