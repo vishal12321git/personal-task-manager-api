@@ -18,7 +18,7 @@ module.exports = {
     dialect: 'postgres',
   },
   production: {
-    use_env_variable: 'DB_url',
+    use_env_variable: 'postgresql://postgres_taskmanager_trbr_user:WPjC90TZXDvkWh6Byo750wMxgBE2ldUt@dpg-d20928vgi27c73cah5bg-a.oregon-postgres.render.com/postgres_taskmanager_trbr',
     dialect: 'postgres',
     dialectOptions: {
       ssl: {
