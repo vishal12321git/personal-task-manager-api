@@ -3,26 +3,19 @@
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
-const dotenv = require('dotenv');
+const process = require('process');
 const basename = path.basename(__filename);
-
-dotenv.config();
-
+const env = process.env.NODE_ENV || 'development';
+const config = require(__dirname + '/../config/config.js')[env];
 const db = {};
 
-const sequelize = new Sequelize(
-    process.env.DB_NAME,
-    process.env.DB_USER,
-    process.env.DB_PASSWORD,
-    {
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
-      dialect: 'postgres',
-      logging: false,
-    },
-);
+let sequelize;
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+} else {
+  sequelize = new Sequelize(config.database, config.username, config.password, config);
+}
 
-// Import all models in the same folder except index.js
 fs
     .readdirSync(__dirname)
     .filter((file) => {
@@ -38,14 +31,12 @@ fs
       db[model.name] = model;
     });
 
-// Handle model associations if defined
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }
 });
 
-// Export Sequelize and models
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
