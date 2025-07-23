@@ -1,8 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { User } = require('../models');
+const {User} = require('../models');
 const asyncHandler = require('../utils/asyncHandler.js');
-const { JWT_SECRET, JWT_EXPIRATION } = require('../config/appConfig.js');
+const {JWT_SECRET, JWT_EXPIRATION} = require('../config/appConfig.js');
 const ApiError = require('../utils/ApiError.js');
 const ApiResponse = require('../utils/ApiResponse.js');
 
@@ -13,13 +13,13 @@ const cookieOptions = {
 
 // Controller for user register
 const register = asyncHandler(async (req, res, next) => {
-  const { username, email, password } = req.body;
+  const {username, email, password} = req.body;
   if (!username || !email || !password) {
     throw new ApiError(400, 'All fields are required.');
   }
 
   // Check user if already exist
-  const existingUser = await User.findOne({ where: { email: email } });
+  const existingUser = await User.findOne({where: {email: email}});
   if (existingUser) {
     throw new ApiError(409, 'User with this username already exists');
   }
@@ -34,7 +34,7 @@ const register = asyncHandler(async (req, res, next) => {
   });
 
   // Generate jwt token
-  const token = jwt.sign({ id: newUser.id, email: newUser.email }, JWT_SECRET, {
+  const token = jwt.sign({id: newUser.id, email: newUser.email}, JWT_SECRET, {
     expiresIn: JWT_EXPIRATION,
   });
 
@@ -50,26 +50,26 @@ const register = asyncHandler(async (req, res, next) => {
   };
 
   return res
-    .status(201)
-    .cookie('accessToken', token, cookieOptions)
-    .json(
-      new ApiResponse(
-        201,
-        { user: responseUserData, accessToken: token },
-        'User registered successfully!',
-      ),
-    );
+      .status(201)
+      .cookie('accessToken', token, cookieOptions)
+      .json(
+          new ApiResponse(
+              201,
+              {user: responseUserData, accessToken: token},
+              'User registered successfully!',
+          ),
+      );
 });
 
 // Controller for user sign in
 const login = asyncHandler(async (req, res, next) => {
-  const { email, password } = req.body;
+  const {email, password} = req.body;
 
   if (!email || !password) {
     throw new ApiError(400, 'Email and password are required.');
   }
 
-  const user = await User.findOne({ where: { email: email } });
+  const user = await User.findOne({where: {email: email}});
   if (!user) {
     throw new ApiError(401, 'Invalid credentials.');
   }
@@ -80,7 +80,7 @@ const login = asyncHandler(async (req, res, next) => {
   }
 
   // Generate JWT token
-  const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
+  const token = jwt.sign({id: user.id, email: user.email}, JWT_SECRET, {
     expiresIn: JWT_EXPIRATION,
   });
 
@@ -91,25 +91,25 @@ const login = asyncHandler(async (req, res, next) => {
   };
 
   return res
-    .status(200)
-    .cookie('accessToken', token, cookieOptions)
-    .json(
-      new ApiResponse(
-        200,
-        { user: responseUserData, accessToken: token },
-        'Logged in successfully!',
-      ),
-    );
+      .status(200)
+      .cookie('accessToken', token, cookieOptions)
+      .json(
+          new ApiResponse(
+              200,
+              {user: responseUserData, accessToken: token},
+              'Logged in successfully!',
+          ),
+      );
 });
 
 // Controller to logout user
 const logout = asyncHandler(async (req, res, next) => {
   return res
-    .status(200)
-    .clearCookie('accessToken', cookieOptions)
-    .json(
-      new ApiResponse(200, {}, 'User logged out'),
-    );
+      .status(200)
+      .clearCookie('accessToken', cookieOptions)
+      .json(
+          new ApiResponse(200, {}, 'User logged out'),
+      );
 });
 
-module.exports = { register, login, logout };
+module.exports = {register, login, logout};

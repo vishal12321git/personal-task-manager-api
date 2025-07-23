@@ -1,12 +1,37 @@
-const { Task } = require('../models');
+const {Task} = require('../models');
 const asyncHandler = require('../utils/asyncHandler.js');
 const ApiError = require('../utils/ApiError.js');
 const ApiResponse = require('../utils/ApiResponse.js');
+const {Op} = require('sequelize');
 
 // Get all tasks for logged-in user
 const getUserTasks = asyncHandler(async (req, res) => {
   const currentUserId = req.user.id;
-  const tasks = await Task.findAll({ where: { userId: currentUserId } });
+
+  const {
+    priority,
+    status,
+    sortBy = 'dueDate',
+    sortOrder = 'ASC',
+    dueDateFrom,
+    dueDateTo,
+  } = req.query;
+
+  const where = {userId: currentUserId};
+
+  if (priority) where.priority = priority;
+  if (status) where.status = status;
+
+  if (dueDateFrom || dueDateTo) {
+    where.dueDate = {};
+    if (dueDateFrom) where.dueDate[Op.gte] = new Date(dueDateFrom);
+    if (dueDateTo) where.dueDate[Op.lte] = new Date(dueDateTo);
+  }
+
+  const tasks = await Task.findAll({
+    where,
+    order: [[sortBy, sortOrder.toUpperCase()]],
+  });
 
   return res.status(200).json(new ApiResponse(200, tasks, 'Tasks fetched successfully!'));
 });
@@ -14,7 +39,7 @@ const getUserTasks = asyncHandler(async (req, res) => {
 // Create a new task
 const createTask = asyncHandler(async (req, res) => {
   const currentUserId = req.user.id;
-  const { title, description, status, priority, dueDate } = req.body;
+  const {title, description, status, priority, dueDate} = req.body;
 
   if (!title || !priority || !dueDate) {
     throw new ApiError(400, 'Title, priority, and due date are required.');
@@ -35,7 +60,7 @@ const createTask = asyncHandler(async (req, res) => {
 // Get a specific task
 const getTaskById = asyncHandler(async (req, res) => {
   const currentUserId = req.user.id;
-  const { id: taskId } = req.params;
+  const {id: taskId} = req.params;
 
   const task = await Task.findByPk(taskId);
   if (!task || task.userId !== currentUserId) {
@@ -48,8 +73,8 @@ const getTaskById = asyncHandler(async (req, res) => {
 // Update a task
 const updateTask = asyncHandler(async (req, res) => {
   const currentUserId = req.user.id;
-  const { id: taskId } = req.params;
-  const { title, description, priority, dueDate, status } = req.body;
+  const {id: taskId} = req.params;
+  const {title, description, priority, dueDate, status} = req.body;
 
   const task = await Task.findByPk(taskId);
   if (!task || task.userId !== currentUserId) {
@@ -70,7 +95,7 @@ const updateTask = asyncHandler(async (req, res) => {
 // Delete a task
 const deleteTask = asyncHandler(async (req, res) => {
   const currentUserId = req.user.id;
-  const { id: taskId } = req.params;
+  const {id: taskId} = req.params;
 
   const task = await Task.findByPk(taskId);
   if (!task || task.userId !== currentUserId) {
@@ -82,4 +107,4 @@ const deleteTask = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, null, 'Task deleted successfully!'));
 });
 
-module.exports = { getUserTasks, createTask, getTaskById, updateTask, deleteTask };
+module.exports = {getUserTasks, createTask, getTaskById, updateTask, deleteTask};
