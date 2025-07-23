@@ -5,25 +5,25 @@ const asyncHandler = require('../utils/asyncHandler.js');
 const {JWT_SECRET, JWT_EXPIRATION} = require('../config/appConfig.js');
 const ApiError = require('../utils/ApiError.js');
 const ApiResponse = require('../utils/ApiResponse.js');
+const logger = require('../utils/logger.js');
 
 const cookieOptions = {
   httpOnly: true,
   secure: true,
 };
-const getAll = async (req, res, next)=>{
-  const task = await User.findAll();
-  res.json(task);
-};
+
 // Controller for user register
 const register = asyncHandler(async (req, res, next) => {
   const {username, email, password} = req.body;
   if (!username || !email || !password) {
+    logger.error('All fields are required.');
     throw new ApiError(400, 'All fields are required.');
   }
 
   // Check user if already exist
   const existingUser = await User.findOne({where: {email: email}});
   if (existingUser) {
+    logger.error('User with this username already exists.');
     throw new ApiError(409, 'User with this username already exists');
   }
 
@@ -51,7 +51,7 @@ const register = asyncHandler(async (req, res, next) => {
     username: newUser.username,
     email: newUser.email,
   };
-
+  logger.info('User registered successfully!');
   return res
       .status(201)
       .cookie('accessToken', token, cookieOptions)
@@ -69,16 +69,19 @@ const login = asyncHandler(async (req, res, next) => {
   const {email, password} = req.body;
 
   if (!email || !password) {
+    logger.error('Email and password are required.');
     throw new ApiError(400, 'Email and password are required.');
   }
 
   const user = await User.findOne({where: {email: email}});
   if (!user) {
+    logger.error('Invalid credentials.');
     throw new ApiError(401, 'Invalid credentials.');
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
+    logger.error('Invalid credentials.');
     throw new ApiError(401, 'Invalid credentials.');
   }
 
@@ -92,7 +95,7 @@ const login = asyncHandler(async (req, res, next) => {
     username: user.username,
     email: user.email,
   };
-
+  logger.info('Logged in successfully!');
   return res
       .status(200)
       .cookie('accessToken', token, cookieOptions)
@@ -107,6 +110,7 @@ const login = asyncHandler(async (req, res, next) => {
 
 // Controller to logout user
 const logout = asyncHandler(async (req, res, next) => {
+  logger.info('User logged out');
   return res
       .status(200)
       .clearCookie('accessToken', cookieOptions)
@@ -115,4 +119,4 @@ const logout = asyncHandler(async (req, res, next) => {
       );
 });
 
-module.exports = {getAll, register, login, logout};
+module.exports = {register, login, logout};

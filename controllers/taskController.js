@@ -3,6 +3,7 @@ const asyncHandler = require('../utils/asyncHandler.js');
 const ApiError = require('../utils/ApiError.js');
 const ApiResponse = require('../utils/ApiResponse.js');
 const {Op} = require('sequelize');
+const logger = require('../utils/logger.js');
 
 // Get all tasks for logged-in user
 const getUserTasks = asyncHandler(async (req, res) => {
@@ -32,7 +33,7 @@ const getUserTasks = asyncHandler(async (req, res) => {
     where,
     order: [[sortBy, sortOrder.toUpperCase()]],
   });
-
+  logger.info('Tasks fetched successfully!');
   return res.status(200).json(new ApiResponse(200, tasks, 'Tasks fetched successfully!'));
 });
 
@@ -42,6 +43,7 @@ const createTask = asyncHandler(async (req, res) => {
   const {title, description, status, priority, dueDate} = req.body;
 
   if (!title || !priority || !dueDate) {
+    logger.error('Title, priority, and due date are required.');
     throw new ApiError(400, 'Title, priority, and due date are required.');
   }
 
@@ -53,7 +55,7 @@ const createTask = asyncHandler(async (req, res) => {
     dueDate: new Date(dueDate),
     userId: currentUserId,
   });
-
+  logger.info('Task created successfully!');
   return res.status(201).json(new ApiResponse(201, newTask, 'Task created successfully!'));
 });
 
@@ -64,9 +66,10 @@ const getTaskById = asyncHandler(async (req, res) => {
 
   const task = await Task.findByPk(taskId);
   if (!task || task.userId !== currentUserId) {
+    logger.error('Task not found or unauthorized.');
     throw new ApiError(404, 'Task not found or unauthorized.');
   }
-
+  logger.info('Task retrieved successfully!');
   return res.status(200).json(new ApiResponse(200, task, 'Task retrieved successfully!'));
 });
 
@@ -78,6 +81,7 @@ const updateTask = asyncHandler(async (req, res) => {
 
   const task = await Task.findByPk(taskId);
   if (!task || task.userId !== currentUserId) {
+    logger.error('Task not found or unauthorized.');
     throw new ApiError(404, 'Task not found or unauthorized.');
   }
 
@@ -88,7 +92,7 @@ const updateTask = asyncHandler(async (req, res) => {
   task.status = status || task.status;
 
   await task.save();
-
+  logger.info('Task updated successfully!');
   return res.status(200).json(new ApiResponse(200, task, 'Task updated successfully!'));
 });
 
@@ -99,11 +103,12 @@ const deleteTask = asyncHandler(async (req, res) => {
 
   const task = await Task.findByPk(taskId);
   if (!task || task.userId !== currentUserId) {
+    logger.error('Task not found or unauthorized.');
     throw new ApiError(404, 'Task not found or unauthorized.');
   }
 
   await task.destroy();
-
+  logger.info('Task deleted successfully!');
   return res.status(200).json(new ApiResponse(200, null, 'Task deleted successfully!'));
 });
 
