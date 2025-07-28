@@ -29,7 +29,6 @@ const register = asyncHandler(async (req, res, next) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // Create new user
   const newUser = await User.create({
     username,
     email,
@@ -64,7 +63,7 @@ const register = asyncHandler(async (req, res, next) => {
       );
 });
 
-// Controller for user sign in
+// login controller
 const login = asyncHandler(async (req, res, next) => {
   const {email, password} = req.body;
 

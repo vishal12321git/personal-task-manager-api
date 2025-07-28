@@ -1,22 +1,27 @@
 require('dotenv').config();
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 module.exports = {
-  development: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
+  [process.env.NODE_ENV || 'development']: {
     dialect: 'postgres',
-  },
-  production: {
-    use_env_variable: 'DB_url',
-    dialect: 'postgres',
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false,
-      },
-    },
+    ...(isProduction ?
+      {
+        use_env_variable: 'DB_URL',
+        dialectOptions: {
+          ssl: {
+            require: true,
+            rejectUnauthorized: false,
+          },
+        },
+      } :
+      {
+        username: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT,
+      }),
   },
 };
+

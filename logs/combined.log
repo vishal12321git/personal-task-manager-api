@@ -114,3 +114,41 @@
 2025-07-28 18:03:25 | info | [POST] /api/v1
 2025-07-28 18:03:31 | info | [POST] /api/v1
 2025-07-28 18:03:31 | info | [POST] /api/v1
+2025-07-28 21:30:43 | info | server running at port 8080
+2025-07-28 21:30:49 | info | server running at port 8080
+2025-07-28 21:31:11 | info | server running at port 8080
+2025-07-28 22:22:19 | info | server running at port 8080
+2025-07-28 22:22:19 | info | server running at port 8080
+2025-07-28 22:22:29 | info | server running at port 8080
+2025-07-28 23:06:32 | info | server running at port 8080
+2025-07-28 23:06:40 | info | server running at port 8080
+2025-07-28 23:07:08 | info | server running at port 8080
+2025-07-28 23:19:04 | info | server running at port 8080
+2025-07-28 23:19:06 | info | server running at port 8080
+2025-07-28 23:23:48 | info | [POST] /api/v1
+2025-07-28 23:23:56 | info | [POST] /api/v1/login
+2025-07-28 23:24:29 | info | [POST] /api/v1/login
+2025-07-28 23:25:37 | info | [POST] /api/v1/auth/login
+2025-07-28 23:25:37 | error | Invalid credentials.
+2025-07-28 23:28:03 | info | server running at port 8080
+2025-07-28 23:28:06 | info | server running at port 8080
+2025-07-28 23:35:26 | info | [POST] /api/v1/auth/login
+2025-07-28 23:35:26 | error | Invalid credentials.
+2025-07-28 23:35:35 | info | [POST] /api/v1/auth/login
+2025-07-28 23:35:35 | error | Invalid credentials.
+2025-07-28 23:35:36 | info | [POST] /api/v1/auth/login
+2025-07-28 23:35:36 | error | Invalid credentials.
+2025-07-28 23:35:37 | info | [POST] /api/v1/auth/login
+2025-07-28 23:35:37 | error | Invalid credentials.
+2025-07-28 23:35:37 | info | [POST] /api/v1/auth/login
+2025-07-28 23:35:37 | error | Invalid credentials.
+2025-07-28 23:35:38 | info | [POST] /api/v1/auth/login
+2025-07-28 23:35:38 | error | Invalid credentials.
+2025-07-28 23:35:38 | info | [POST] /api/v1/auth/login
+2025-07-28 23:35:38 | error | Invalid credentials.
+2025-07-28 23:35:39 | info | [POST] /api/v1/auth/login
+2025-07-28 23:35:39 | error | Invalid credentials.
+2025-07-28 23:37:23 | info | [POST] /api/v1/auth/login
+2025-07-28 23:37:23 | error | Invalid credentials.
+2025-07-28 23:37:29 | info | [POST] /api/v1/auth/logout
+2025-07-28 23:37:29 | info | User logged out

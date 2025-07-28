@@ -12,14 +12,14 @@ const limiter = (req, res, next) => {
 
     setTimeout(() => {
       delete ipRequestLimiter[ip];
-    }, 1000 * 15);
+    }, 1000 * 60 * 15);
 
     return next();
   }
 
   ipRequestLimiter[ip].count += 1;
 
-  if (ipRequestLimiter[ip].count > 3) {
+  if (ipRequestLimiter[ip].count > 70) {
     return next(new ApiError(429, 'Request limit exceeded, try after some time.'));
   }
 
