@@ -5,6 +5,7 @@ const authRouter = require('./routes/authRoutes.js');
 const taskRouter = require('./routes/taskRoutes.js');
 const limiter = require('./middlewares/rateLimiterMiddleware.js');
 const logger = require('./utils/logger.js');
+const ApiError = require('./utils/ApiError.js');
 
 dotenv.config();
 
@@ -21,6 +22,15 @@ app.use((req, res, next)=>{
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/tasks', taskRouter);
 
+app.use('/{*vishal}', (req, res, next)=>{
+  return next(new ApiError(404, 'Route not found'));
+});
+app.use((err, req, res, next)=>{
+  res.status(err.statusCode).json({
+    status: 'fail',
+    message: err.message,
+  });
+});
 
 app.listen(PORT, ()=> logger.info(`server running at port ${PORT}`));
 
